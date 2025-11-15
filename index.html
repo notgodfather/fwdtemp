@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shiny Recipes</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="spotlight"></div>
+
+  <header class="header glass">
+    <div class="header-top">
+      <div class="logo"></div>
+      <h1 class="brand">Shiny Recipes</h1>
+
+      <div class="auth">
+        <!-- Placeholder only: no Google logic -->
+        <button class="btn google-btn" title="Google Sign-In (coming soon)">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" />
+          <span>Continue with Google</span>
+        </button>
+        <button id="signoutBtn" class="btn subtle hidden">Sign out</button>
+      </div>
+    </div>
+
+    <div class="header-search">
+      <input id="searchInput" placeholder="Search recipes, tags..." />
+      <button id="addBtn" class="btn primary">Add</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="addPanel" class="panel hidden">
+      <h2>Add a recipe</h2>
+      <form id="addForm" class="form">
+        <input required id="title" placeholder="Title" />
+        <input required id="image" placeholder="Image URL" />
+        <input id="tags" placeholder="Tags (comma separated)" />
+        <textarea required id="desc" rows="3" placeholder="Short description"></textarea>
+        <button class="btn grad">Save</button>
+      </form>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Discover</h2>
+        <div class="muted"><span id="count">0</span> recipes</div>
+      </div>
+      <div id="grid" class="grid"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav glass">
+    <button class="navtab" data-tab="home" data-active="true">Home</button>
+    <button class="navtab" data-tab="search">Search</button>
+    <button class="navtab" data-tab="add">Add</button>
+    <button class="navtab" data-tab="my">My</button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
