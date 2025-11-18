@@ -4,9 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Shiny Recipes</title>
+
   <link rel="stylesheet" href="styles.css" />
-  <script src="https://apis.google.com/js/api:client.js"></script> <!-- Google API Script -->
+
+  <!-- NEW Google Identity Services library -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
+
 <body>
   <div class="spotlight"></div>
 
@@ -16,11 +20,25 @@
       <h1 class="brand">Shiny Recipes</h1>
 
       <div class="auth">
-        <!-- Google Sign-In Button -->
-        <button class="btn google-btn" id="googleSignInBtn">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" />
-          <span>Continue with Google</span>
-        </button>
+
+        <!-- GOOGLE OAUTH LOADER -->
+        <div id="g_id_onload"
+             data-client_id="411071239565-di7tfbq65fduj0o9or2ek9v4ir6nqm9o.apps.googleusercontent.com"
+             data-context="signin"
+             data-callback="onGoogleSignIn"
+             data-auto_prompt="false">
+        </div>
+
+        <!-- GOOGLE BUTTON -->
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="signin_with"
+             data-size="medium">
+        </div>
+
+        <!-- SIGN OUT -->
         <button id="signoutBtn" class="btn subtle hidden">Sign out</button>
       </div>
     </div>
@@ -46,8 +64,11 @@
     <section>
       <div class="section-head">
         <h2>Discover</h2>
-        <div class="muted"><span id="count">0</span> recipes</div>
+        <div class="muted">
+          <span id="count">0</span> recipes
+        </div>
       </div>
+
       <div id="grid" class="grid"></div>
     </section>
   </main>
@@ -59,6 +80,7 @@
     <button class="navtab" data-tab="my">My</button>
   </nav>
 
-  <script src="app.js"></script> <!-- Include the updated JavaScript -->
+  <script src="app.js"></script>
+
 </body>
 </html>
