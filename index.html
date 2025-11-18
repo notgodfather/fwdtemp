@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Shiny Recipes</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://apis.google.com/js/api:client.js"></script> <!-- Google API Script -->
 </head>
 <body>
   <div class="spotlight"></div>
@@ -15,8 +16,8 @@
       <h1 class="brand">Shiny Recipes</h1>
 
       <div class="auth">
-        <!-- Placeholder only: no Google logic -->
-        <button class="btn google-btn" title="Google Sign-In (coming soon)">
+        <!-- Google Sign-In Button -->
+        <button class="btn google-btn" id="googleSignInBtn">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" />
           <span>Continue with Google</span>
         </button>
@@ -58,6 +59,6 @@
     <button class="navtab" data-tab="my">My</button>
   </nav>
 
-  <script src="app.js"></script>
+  <script src="app.js"></script> <!-- Include the updated JavaScript -->
 </body>
 </html>
