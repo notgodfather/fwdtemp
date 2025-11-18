@@ -1,93 +1,64 @@
-// Demo data in-memory
-const uid = () => crypto.randomUUID()
-const sample = [
-  { id: uid(), title: 'Paneer Tikka Wrap', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWXmwK5N2Cb2oM0GE--JOcXc7IDpOPKxVVUA&s', tags: ['paneer','wrap','tandoori'], desc: 'Smoky paneer, crisp veg, tangy mint chutney.' },
-  { id: uid(), title: 'Masala Maggi', image: 'https://images.unsplash.com/photo-1495546968767-f0573cca821e?q=80&w=1200&auto=format&fit=crop', tags: ['noodles','quick'], desc: '5-minute comfort noodles with veggies.' },
-  { id: uid(), title: 'Cold Coffee', image: 'https://images.unsplash.com/photo-1517705008128-361805f42e86?q=80&w=1200&auto=format&fit=crop', tags: ['coffee','drink'], desc: 'Frothy cafe-style iced coffee.' },
-  { id: uid(), title: 'Aloo Paratha', image: 'https://pipingpotcurry.com/wp-content/uploads/2022/11/Aloo-Paratha-Piping-Pot-Curry.jpg', tags: ['paratha','north indian'], desc: 'Stuffed flatbread with spiced potato.' },
-  { id: uid(), title: 'Veg Pulao', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgZRhyo-Zt6dtTBw9m-jPZYvkt8rMp9yZOsw&s', tags: ['rice','one-pot'], desc: 'Fragrant rice with mixed vegetables.' },
-  { id: uid(), title: 'Chocolate Mug Cake', image: 'https://i1.wp.com/www.livewellbakeoften.com/wp-content/uploads/2019/09/Chocolate-Mug-Cake-4.jpg?resize=745,1118&ssl=1', tags: ['dessert','microwave'], desc: 'Single-serve gooey chocolate treat.' }
-]
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shiny Recipes</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://apis.google.com/js/api:client.js"></script> <!-- Google API Script -->
+</head>
+<body>
+  <div class="spotlight"></div>
 
-// State
-const state = {
-  recipes: [...sample],
-  filter: ''
-}
+  <header class="header glass">
+    <div class="header-top">
+      <div class="logo"></div>
+      <h1 class="brand">Shiny Recipes</h1>
 
-// Elements
-const grid = document.getElementById('grid')
-const countEl = document.getElementById('count')
-const searchInput = document.getElementById('searchInput')
-const addBtn = document.getElementById('addBtn')
-const addPanel = document.getElementById('addPanel')
-const addForm = document.getElementById('addForm')
-const navtabs = document.querySelectorAll('.navtab')
-
-// Render cards
-function cardTemplate(r){
-  const tags = r.tags.map(t=>`<span class="tag">#${t}</span>`).join('')
-  return `
-    <article class="card">
-      <img class="thumb" src="${r.image}" alt="${r.title}" />
-      <div class="body">
-        <h3 class="title">${r.title}</h3>
-        <p class="desc">${r.desc}</p>
-        <div class="tags">${tags}</div>
+      <div class="auth">
+        <!-- Google Sign-In Button -->
+        <button class="btn google-btn" id="googleSignInBtn">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" />
+          <span>Continue with Google</span>
+        </button>
+        <button id="signoutBtn" class="btn subtle hidden">Sign out</button>
       </div>
-    </article>
-  `
-}
+    </div>
 
-function render(){
-  const q = state.filter.trim().toLowerCase()
-  const list = state.recipes.filter(r=>{
-    if(!q) return true
-    return r.title.toLowerCase().includes(q)
-      || r.desc.toLowerCase().includes(q)
-      || r.tags.some(t=>t.toLowerCase().includes(q))
-  })
-  grid.innerHTML = list.map(cardTemplate).join('')
-  countEl.textContent = String(list.length)
-}
+    <div class="header-search">
+      <input id="searchInput" placeholder="Search recipes, tags..." />
+      <button id="addBtn" class="btn primary">Add</button>
+    </div>
+  </header>
 
-// Handlers
-searchInput.addEventListener('input', e => {
-  state.filter = e.target.value
-  render()
-})
+  <main class="container">
+    <section id="addPanel" class="panel hidden">
+      <h2>Add a recipe</h2>
+      <form id="addForm" class="form">
+        <input required id="title" placeholder="Title" />
+        <input required id="image" placeholder="Image URL" />
+        <input id="tags" placeholder="Tags (comma separated)" />
+        <textarea required id="desc" rows="3" placeholder="Short description"></textarea>
+        <button class="btn grad">Save</button>
+      </form>
+    </section>
 
-addBtn.addEventListener('click', () => {
-  addPanel.classList.toggle('hidden')
-})
+    <section>
+      <div class="section-head">
+        <h2>Discover</h2>
+        <div class="muted"><span id="count">0</span> recipes</div>
+      </div>
+      <div id="grid" class="grid"></div>
+    </section>
+  </main>
 
-addForm.addEventListener('submit', e => {
-  e.preventDefault()
-  const title = document.getElementById('title').value.trim()
-  const image = document.getElementById('image').value.trim()
-  const tags = document.getElementById('tags').value.split(',').map(s=>s.trim()).filter(Boolean)
-  const desc = document.getElementById('desc').value.trim()
-  if(!title || !image || !desc) return
-  state.recipes.unshift({ id: uid(), title, image, tags, desc })
-  addForm.reset()
-  addPanel.classList.add('hidden')
-  render()
-})
+  <nav class="bottom-nav glass">
+    <button class="navtab" data-tab="home" data-active="true">Home</button>
+    <button class="navtab" data-tab="search">Search</button>
+    <button class="navtab" data-tab="add">Add</button>
+    <button class="navtab" data-tab="my">My</button>
+  </nav>
 
-// Bottom nav demo behavior
-navtabs.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    navtabs.forEach(b=>b.dataset.active='false')
-    btn.dataset.active='true'
-    if(btn.dataset.tab==='add'){
-      addPanel.classList.remove('hidden')
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-    if(btn.dataset.tab==='search'){
-      document.getElementById('searchInput').focus()
-    }
-  })
-})
-
-// Initial paint
-render()
+  <script src="app.js"></script> <!-- Include the updated JavaScript -->
+</body>
+</html>
