@@ -4,10 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Shiny Recipes</title>
-
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- NEW Google Identity Services library -->
+  <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
@@ -18,17 +17,15 @@
     <div class="header-top">
       <div class="logo"></div>
       <h1 class="brand">Shiny Recipes</h1>
-
       <div class="auth">
-        <!-- GOOGLE OAUTH LOADER -->
+        <!-- Google OAuth Loader -->
         <div id="g_id_onload"
              data-client_id="411071239565-di7tfbq65fduj0o9or2ek9v4ir6nqm9o.apps.googleusercontent.com"
              data-context="signin"
              data-callback="onGoogleSignIn"
              data-auto_prompt="false">
         </div>
-
-        <!-- GOOGLE BUTTON -->
+        <!-- Google Login Button -->
         <div class="g_id_signin"
              data-type="standard"
              data-shape="rectangular"
@@ -36,8 +33,7 @@
              data-text="signin_with"
              data-size="medium">
         </div>
-
-        <!-- SIGN OUT -->
+        <!-- Sign Out Button -->
         <button id="signoutBtn" class="btn subtle hidden">Sign out</button>
       </div>
     </div>
@@ -49,29 +45,7 @@
   </header>
 
   <main class="container">
-    <section id="addPanel" class="panel hidden">
-      <h2>Add a recipe</h2>
-      <form id="addForm" class="form">
-        <input required id="title" placeholder="Title" />
-        <input required id="image" placeholder="Image URL" />
-        <input id="tags" placeholder="Tags (comma separated)" />
-        <textarea required id="desc" rows="3" placeholder="Short description"></textarea>
-        <button class="btn grad">Save</button>
-      </form>
-    </section>
-
-    <section>
-      <div class="section-head">
-        <h2>Discover</h2>
-        <div class="muted">
-          <span id="count">0</span> recipes
-        </div>
-      </div>
-
-      <div id="grid" class="grid"></div>
-    </section>
-
-    <!-- PROFILE PAGE -->
+    <!-- Profile Page -->
     <section id="profilePage" class="panel hidden">
       <div class="profile-header glass">
         <img id="profilePic" class="profile-pic" src="" alt="">
@@ -90,16 +64,30 @@
       </div>
     </section>
 
+    <!-- Discover Section -->
+    <section>
+      <div class="section-head">
+        <h2>Discover</h2>
+        <div class="muted"><span id="count">0</span> recipes</div>
+      </div>
+      <div id="grid" class="grid"></div>
+    </section>
+
   </main>
 
+  <!-- Bottom Navigation -->
   <nav class="bottom-nav glass">
     <button class="navtab" data-tab="home" data-active="true">Home</button>
     <button class="navtab" data-tab="search">Search</button>
     <button class="navtab" data-tab="add">Add</button>
-    <button class="navtab" data-tab="my">My</button>
+    <button class="navtab" data-tab="profile" id="profileTabBtn">
+      <img src="profile-icon.svg" alt="Profile" />
+    </button>
+    <button class="navtab" data-tab="favorites" id="favoritesTabBtn">
+      <img src="favorites-icon.svg" alt="Favorites" />
+    </button>
   </nav>
 
   <script src="app.js"></script>
-
 </body>
 </html>
