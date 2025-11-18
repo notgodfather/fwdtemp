@@ -1,18 +1,29 @@
-// Demo data in-memory
+// ------------------------
+// DEMO DATA
+// ------------------------
 const uid = () => crypto.randomUUID();
 const sample = [
-  { id: uid(), title: "Paneer Tikka Wrap", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWXmwK5N2Cb2oM0GE--JOcXc7IDpOPKxVVUA&s", tags: ["paneer","wrap","tandoori"], desc: "Smoky paneer, crisp veg, tangy mint chutney." },
-  { id: uid(), title: "Masala Maggi", image: "https://images.unsplash.com/photo-1495546968767-f0573cca821e?q=80&w=1200&auto=format&fit=crop", tags: ["noodles","quick"], desc: "5-minute comfort noodles with veggies." },
-  { id: uid(), title: "Cold Coffee", image: "https://images.unsplash.com/photo-1517705008128-361805f42e86?q=80&w=1200&auto=format&fit=crop", tags: ["coffee","drink"], desc: "Frothy cafe-style iced coffee." },
-  { id: uid(), title: "Aloo Paratha", image: "https://pipingpotcurry.com/wp-content/uploads/2022/11/Aloo-Paratha-Piping-Pot-Curry.jpg", tags: ["paratha","north indian"], desc: "Stuffed flatbread with spiced potato." },
-  { id: uid(), title: "Veg Pulao", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgZRhyo-Zt6dtTBw9m-jPZYvkt8rMp9yZOsw&s", tags: ["rice","one-pot"], desc: "Fragrant rice with mixed vegetables." },
-  { id: uid(), title: "Chocolate Mug Cake", image: "https://i1.wp.com/www.livewellbakeoften.com/wp-content/uploads/2019/09/Chocolate-Mug-Cake-4.jpg?resize=745,1118&ssl=1", tags: ["dessert","microwave"], desc: "Single-serve gooey chocolate treat." }
+  { id: uid(), title: "Paneer Tikka Wrap", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWXmwK5N2Cb2oM0GE--JOcXc7IDpOPKxVVUA&s", tags: ["paneer","wrap","tandoori"], desc: "Smoky paneer, crisp veg, tangy mint chutney.", owner: null },
+  { id: uid(), title: "Masala Maggi", image: "https://images.unsplash.com/photo-1495546968767-f0573cca821e?q=80&w=1200&auto=format&fit=crop", tags: ["noodles","quick"], desc: "5-minute comfort noodles with veggies.", owner: null },
+  { id: uid(), title: "Cold Coffee", image: "https://images.unsplash.com/photo-1517705008128-361805f42e86?q=80&w=1200&auto=format&fit=crop", tags: ["coffee","drink"], desc: "Frothy cafe-style iced coffee.", owner: null },
+  { id: uid(), title: "Aloo Paratha", image: "https://pipingpotcurry.com/wp-content/uploads/2022/11/Aloo-Paratha-Piping-Pot-Curry.jpg", tags: ["paratha","north indian"], desc: "Stuffed flatbread with spiced potato.", owner: null },
+  { id: uid(), title: "Veg Pulao", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgZRhyo-Zt6dtTBw9m-jPZYvkt8rMp9yZOsw&s", tags: ["rice","one-pot"], desc: "Fragrant rice with mixed vegetables.", owner: null },
+  { id: uid(), title: "Chocolate Mug Cake", image: "https://i1.wp.com/www.livewellbakeoften.com/wp-content/uploads/2019/09/Chocolate-Mug-Cake-4.jpg?resize=745,1118&ssl=1", tags: ["dessert","microwave"], desc: "Single-serve gooey chocolate treat.", owner: null }
 ];
 
-// App state
-const state = { recipes: [...sample], filter: "" };
+// ------------------------
+// STATE
+// ------------------------
+const state = {
+  recipes: [...sample],
+  filter: "",
+  user: null,
+  favorites: []
+};
 
-// Elements
+// ------------------------
+// ELEMENTS
+// ------------------------
 const grid = document.getElementById("grid");
 const countEl = document.getElementById("count");
 const searchInput = document.getElementById("searchInput");
@@ -24,7 +35,18 @@ const navtabs = document.querySelectorAll(".navtab");
 // Auth elements
 const signoutBtn = document.getElementById("signoutBtn");
 
-// Render card template
+// Profile page elements
+const profilePage = document.getElementById("profilePage");
+const profilePic = document.getElementById("profilePic");
+const profileName = document.getElementById("profileName");
+const profileEmail = document.getElementById("profileEmail");
+const myRecipesView = document.getElementById("myRecipesView");
+const favoritesView = document.getElementById("favoritesView");
+const profileTabs = document.querySelectorAll(".ptab");
+
+// ------------------------
+// CARD TEMPLATE
+// ------------------------
 function cardTemplate(r) {
   const tags = r.tags.map(t => `<span class="tag">#${t}</span>`).join("");
   return `
@@ -38,6 +60,9 @@ function cardTemplate(r) {
   </article>`;
 }
 
+// ------------------------
+// RENDER DISCOVER GRID
+// ------------------------
 function render() {
   const q = state.filter.toLowerCase();
   const list = state.recipes.filter(r =>
@@ -49,72 +74,136 @@ function render() {
   countEl.textContent = list.length;
 }
 
-// Search
+// ------------------------
+// SEARCH
+// ------------------------
 searchInput.addEventListener("input", e => {
   state.filter = e.target.value;
   render();
 });
 
-// Add recipe
+// ------------------------
+// ADD RECIPE
+// ------------------------
 addBtn.addEventListener("click", () => {
   addPanel.classList.toggle("hidden");
 });
 
-// Form submit
 addForm.addEventListener("submit", e => {
   e.preventDefault();
-  const title = title.value.trim();
-  const image = image.value.trim();
-  const tags = tags.value.split(",").map(t => t.trim()).filter(Boolean);
-  const desc = desc.value.trim();
-  if (!title || !image || !desc) return;
+  const titleVal = title.value.trim();
+  const imageVal = image.value.trim();
+  const tagsVal = tags.value.split(",").map(t => t.trim()).filter(Boolean);
+  const descVal = desc.value.trim();
 
-  state.recipes.unshift({ id: uid(), title, image, tags, desc });
+  if (!titleVal || !imageVal || !descVal) return;
+
+  state.recipes.unshift({
+    id: uid(),
+    title: titleVal,
+    image: imageVal,
+    tags: tagsVal,
+    desc: descVal,
+    owner: state.user ? state.user.email : null
+  });
+
   addForm.reset();
   addPanel.classList.add("hidden");
   render();
 });
 
-// Bottom nav
+// ------------------------
+// BOTTOM NAV
+// ------------------------
 navtabs.forEach(btn => {
   btn.addEventListener("click", () => {
     navtabs.forEach(b => b.dataset.active = "false");
     btn.dataset.active = "true";
-    if (btn.dataset.tab === "search") searchInput.focus();
+
     if (btn.dataset.tab === "add") {
       addPanel.classList.remove("hidden");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+
+    if (btn.dataset.tab === "my") {
+      if (!state.user) return alert("Please sign in first.");
+      profilePage.classList.remove("hidden");
+      renderProfile();
+    }
+
+    if (btn.dataset.tab === "home") {
+      profilePage.classList.add("hidden");
+    }
   });
 });
 
-/* --------------------------
-      GOOGLE SIGN-IN (GIS)
--------------------------- */
+// ------------------------
+// PROFILE RENDERING
+// ------------------------
+function renderProfile() {
+  profilePic.src = state.user.picture;
+  profileName.textContent = state.user.name;
+  profileEmail.textContent = state.user.email;
 
-// Callback from Google
+  renderMyRecipes();
+  renderFavorites();
+}
+
+function renderMyRecipes() {
+  const list = state.recipes.filter(r => r.owner === state.user.email);
+
+  myRecipesView.innerHTML = list.length
+    ? list.map(cardTemplate).join("")
+    : `<p class="muted">You have not added any recipes yet.</p>`;
+}
+
+function renderFavorites() {
+  const list = state.favorites;
+
+  favoritesView.innerHTML = list.length
+    ? list.map(cardTemplate).join("")
+    : `<p class="muted">No favorites yet.</p>`;
+}
+
+// Profile tabs
+profileTabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    profileTabs.forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+
+    document.querySelectorAll(".pview").forEach(v => v.classList.add("hidden"));
+
+    const view = tab.dataset.view;
+    document.getElementById(view + "View").classList.remove("hidden");
+  });
+});
+
+// ------------------------
+// GOOGLE SIGN-IN (GIS)
+// ------------------------
 window.onGoogleSignIn = function(response) {
-  const jwt = response.credential;
-  const payload = JSON.parse(atob(jwt.split(".")[1]));
+  const payload = JSON.parse(atob(response.credential.split(".")[1]));
 
-  console.log("Signed in:", payload);
-
-  document.querySelector(".g_id_signin").classList.add("hidden");
-  signoutBtn.classList.remove("hidden");
-
-  window.user = {
+  state.user = {
     name: payload.name,
     email: payload.email,
     picture: payload.picture
   };
+
+  document.querySelector(".g_id_signin").classList.add("hidden");
+  signoutBtn.classList.remove("hidden");
+
+  renderProfile();
 };
 
-// Sign out
 signoutBtn.onclick = () => {
   google.accounts.id.disableAutoSelect();
   document.querySelector(".g_id_signin").classList.remove("hidden");
   signoutBtn.classList.add("hidden");
-  window.user = null;
+
+  state.user = null;
+  profilePage.classList.add("hidden");
 };
 
+// FIRST RENDER
 render();
