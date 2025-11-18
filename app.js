@@ -49,6 +49,7 @@ const profileTabs = document.querySelectorAll(".ptab");
 // ------------------------
 function cardTemplate(r) {
   const tags = r.tags.map(t => `<span class="tag">#${t}</span>`).join("");
+  const isFavorite = state.favorites.some(fav => fav.id === r.id);
   return `
   <article class="card">
     <img class="thumb" src="${r.image}" alt="${r.title}" />
@@ -56,6 +57,7 @@ function cardTemplate(r) {
       <h3 class="title">${r.title}</h3>
       <p class="desc">${r.desc}</p>
       <div class="tags">${tags}</div>
+      ${state.user ? `<button class="favorite-btn" data-id="${r.id}">${isFavorite ? 'Unfavorite' : 'Favorite'}</button>` : ''}
     </div>
   </article>`;
 }
@@ -72,6 +74,14 @@ function render() {
   );
   grid.innerHTML = list.map(cardTemplate).join("");
   countEl.textContent = list.length;
+
+  // Add favorite button functionality
+  document.querySelectorAll('.favorite-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const recipeId = e.target.dataset.id;
+      toggleFavorite(recipeId);
+    });
+  });
 }
 
 // ------------------------
@@ -110,6 +120,7 @@ addForm.addEventListener("submit", e => {
   addForm.reset();
   addPanel.classList.add("hidden");
   render();
+  if (state.user) renderMyRecipes();
 });
 
 // ------------------------
@@ -141,6 +152,7 @@ navtabs.forEach(btn => {
 // PROFILE RENDERING
 // ------------------------
 function renderProfile() {
+  if (!state.user) return;
   profilePic.src = state.user.picture;
   profileName.textContent = state.user.name;
   profileEmail.textContent = state.user.email;
@@ -149,9 +161,11 @@ function renderProfile() {
   renderFavorites();
 }
 
+// ------------------------
+// MY RECIPES & FAVORITES
+// ------------------------
 function renderMyRecipes() {
   const list = state.recipes.filter(r => r.owner === state.user.email);
-
   myRecipesView.innerHTML = list.length
     ? list.map(cardTemplate).join("")
     : `<p class="muted">You have not added any recipes yet.</p>`;
@@ -159,13 +173,14 @@ function renderMyRecipes() {
 
 function renderFavorites() {
   const list = state.favorites;
-
   favoritesView.innerHTML = list.length
     ? list.map(cardTemplate).join("")
     : `<p class="muted">No favorites yet.</p>`;
 }
 
-// Profile tabs
+// ------------------------
+// PROFILE TABS
+// ------------------------
 profileTabs.forEach(tab => {
   tab.addEventListener("click", () => {
     profileTabs.forEach(t => t.classList.remove("active"));
@@ -175,8 +190,28 @@ profileTabs.forEach(tab => {
 
     const view = tab.dataset.view;
     document.getElementById(view + "View").classList.remove("hidden");
+
+    if (view === 'myrecipes') renderMyRecipes();
+    else if (view === 'favorites') renderFavorites();
   });
 });
+
+// ------------------------
+// TOGGLE FAVORITE
+// ------------------------
+function toggleFavorite(recipeId) {
+  const recipe = state.recipes.find(r => r.id === recipeId);
+  const index = state.favorites.findIndex(f => f.id === recipeId);
+
+  if (index === -1) {
+    state.favorites.push(recipe);
+  } else {
+    state.favorites.splice(index, 1);
+  }
+
+  renderFavorites();
+  render();
+}
 
 // ------------------------
 // GOOGLE SIGN-IN (GIS)
@@ -202,8 +237,14 @@ signoutBtn.onclick = () => {
   signoutBtn.classList.add("hidden");
 
   state.user = null;
+  state.favorites = [];
   profilePage.classList.add("hidden");
+  render();
 };
 
-// FIRST RENDER
-render();
+// ------------------------
+// INITIAL RENDER
+// ------------------------
+window.onload = () => {
+  render();
+};
