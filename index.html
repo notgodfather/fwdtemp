@@ -20,7 +20,6 @@
       <h1 class="brand">Shiny Recipes</h1>
 
       <div class="auth">
-
         <!-- GOOGLE OAUTH LOADER -->
         <div id="g_id_onload"
              data-client_id="411071239565-di7tfbq65fduj0o9or2ek9v4ir6nqm9o.apps.googleusercontent.com"
@@ -71,6 +70,26 @@
 
       <div id="grid" class="grid"></div>
     </section>
+
+    <!-- PROFILE PAGE -->
+    <section id="profilePage" class="panel hidden">
+      <div class="profile-header glass">
+        <img id="profilePic" class="profile-pic" src="" alt="">
+        <h2 id="profileName"></h2>
+        <p id="profileEmail" class="muted"></p>
+      </div>
+
+      <div class="profile-tabs">
+        <button class="ptab active" data-view="myrecipes">My Recipes</button>
+        <button class="ptab" data-view="favorites">Favorites</button>
+      </div>
+
+      <div class="profile-content">
+        <div id="myRecipesView" class="pview"></div>
+        <div id="favoritesView" class="pview hidden"></div>
+      </div>
+    </section>
+
   </main>
 
   <nav class="bottom-nav glass">
